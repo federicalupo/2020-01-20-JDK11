@@ -3,6 +3,7 @@ package it.polito.tdp.artsmia;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.artsmia.model.Arco;
 import it.polito.tdp.artsmia.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -31,7 +32,7 @@ public class ArtsmiaController {
     private Button btnCalcolaPercorso;
 
     @FXML
-    private ComboBox<?> boxRuolo;
+    private ComboBox<String> boxRuolo;
 
     @FXML
     private TextField txtArtista;
@@ -42,7 +43,23 @@ public class ArtsmiaController {
     @FXML
     void doArtistiConnessi(ActionEvent event) {
     	txtResult.clear();
-    	txtResult.appendText("Calcola artisti connessi");
+    	txtResult.appendText("Calcola artisti connessi\n");
+    	
+    	//se seleziona artisti connessi e grafo non creato difficile da gestire (riesco a gestire solo la prima) => creo grafo automaticamente
+    	String ruolo = this.boxRuolo.getValue();
+    	
+    	model.creaGrafo(ruolo);
+    	
+    	
+    	if(model.archiDecrescenti().size()==0) {
+    		txtResult.appendText("Nessuna coppia artisti");
+    	}
+    	else {
+    		for(Arco a: model.archiDecrescenti()) {
+    			txtResult.appendText(a+"\n");
+    		}
+    	}
+
     }
 
     @FXML
@@ -54,11 +71,20 @@ public class ArtsmiaController {
     @FXML
     void doCreaGrafo(ActionEvent event) {
     	txtResult.clear();
-    	txtResult.appendText("Crea grafo");
+    	txtResult.appendText("Crea grafo\n");
+    	
+    	String ruolo = this.boxRuolo.getValue();
+    	
+    	model.creaGrafo(ruolo);
+    	txtResult.appendText("Numero vertici:   "+model.getNVertici()+"  Numero archi:   "+model.getNArchi()+"\n");
     }
 
     public void setModel(Model model) {
     	this.model = model;
+    	
+    	this.boxRuolo.getItems().addAll(model.listaRuoli());
+    	this.boxRuolo.setValue(model.listaRuoli().get(0));
+    	
     }
 
     
