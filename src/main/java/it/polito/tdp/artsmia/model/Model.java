@@ -17,6 +17,9 @@ public class Model {
 	private ArtsmiaDAO dao;
 	private Graph<Artista, DefaultWeightedEdge> grafo;
 	private Map<Integer, Artista> idMap;
+	private int dimensioneMax;
+	private List<Artista> migliore;
+	private int pesoPrecedente;
 
 	public Model() {
 		dao = new ArtsmiaDAO();
@@ -71,4 +74,86 @@ public class Model {
 	public int getNArchi() {
 		return this.grafo.edgeSet().size();
 	}
+	
+	public Artista verificaId(Integer id) {
+		
+		//se c'è id ritorna oggetto altrimenti null
+		Artista a = this.idMap.get(id);
+
+		return a;
+		
+	}
+	
+	/**RICORSIVA
+	 * 
+	 * parto da artista
+	 * dammi i vicini
+	 * per ogni vicino: se hanno stesso peso e non sono già nella lista => aggiungi
+	 * 
+	 * ListaPiuLunga 
+	 * MaxnumeroComponenti = listapiulunga.size
+	 * 
+	 * se la lista trovata è piu lunga => diventa la migliore
+	 * 
+	 *
+	 * 
+	 * 
+	 * @param a
+	 */
+	
+	public List<Artista> cercaPercorso(Artista a) {
+		
+		List<Artista> artistiParziale = new LinkedList<>();
+		migliore = new LinkedList<>();
+		
+		this.dimensioneMax = migliore.size(); //0
+		
+		artistiParziale.add(a);
+		ricorsiva(artistiParziale,a); //nessun livello
+		
+		return migliore;
+	}
+	
+	private void ricorsiva(List<Artista> parziale, Artista a) {
+		
+		if(parziale.size()>this.dimensioneMax) {
+			this.dimensioneMax = parziale.size();
+			this.migliore= new LinkedList<>(parziale);
+		}
+		
+		List<Artista> vicini = Graphs.neighborListOf(this.grafo, a );
+		
+		
+		for(Artista temp : vicini) {
+			
+			
+			if(parziale.size()==1) {
+				pesoPrecedente = (int)this.grafo.getEdgeWeight(this.grafo.getEdge(a, temp));
+			}
+				
+			int peso = (int)this.grafo.getEdgeWeight(this.grafo.getEdge(a, temp));
+			
+			
+			if(! parziale.contains(temp) && peso==pesoPrecedente) {
+				parziale.add(temp);
+				ricorsiva(parziale, temp);
+				
+				//se faccio backtracking ma ci sono piu rami con stesso peso???
+				parziale.remove(temp);
+			}
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

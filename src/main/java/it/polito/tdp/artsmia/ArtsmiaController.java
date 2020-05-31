@@ -1,9 +1,11 @@
 package it.polito.tdp.artsmia;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.artsmia.model.Arco;
+import it.polito.tdp.artsmia.model.Artista;
 import it.polito.tdp.artsmia.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -45,7 +47,8 @@ public class ArtsmiaController {
     	txtResult.clear();
     	txtResult.appendText("Calcola artisti connessi\n");
     	
-    	//se seleziona artisti connessi e grafo non creato difficile da gestire (riesco a gestire solo la prima) => creo grafo automaticamente
+    	//se seleziona artisti connessi e grafo non creato difficile da gestire (riesco a gestire solo la prima)
+    	//=> creo grafo automaticamente oppure disattivo altri pulsanti fin quando non creo grafo
     	String ruolo = this.boxRuolo.getValue();
     	
     	model.creaGrafo(ruolo);
@@ -65,7 +68,19 @@ public class ArtsmiaController {
     @FXML
     void doCalcolaPercorso(ActionEvent event) {
     	txtResult.clear();
-    	txtResult.appendText("Calcola percorso");
+    	
+    	
+    	int id= Integer.valueOf(this.txtArtista.getText());
+    	
+    	if(this.model.verificaId(id)==null) {
+    		this.txtResult.appendText("\nNon esiste artista\n");
+    	}else {
+    		txtResult.appendText("Calcola percorso\n");
+    		List<Artista> artisti = model.cercaPercorso(model.verificaId(id));
+    		for(Artista a : artisti) {
+    			txtResult.appendText(a+"\n");
+    		}
+    	}
     }
 
     @FXML
